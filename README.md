@@ -1,7 +1,7 @@
 
 # TopologicPy MCP Server
 
-A [Model Context Protocol](https://modelcontextprotocol.io/) server that exposes [TopologicPy](https://topologic.app/topologicpy_doc/)'s spatial modeling capabilities to LLM agents like Claude Code, Claude Desktop, and other MCP clients.
+A [Model Context Protocol](https://modelcontextprotocol.io/) server that exposes [TopologicPy](https://github.com/wassimj/topologicpy) [TopologicPy-docs](https://topologicpy.readthedocs.io/en/latest/)'s spatial modeling capabilities to LLM agents like Claude Code, Claude Desktop, and other MCP clients. This was created to assist us in developing further tools around Topologic and TopologicPy
 
 ## What This Enables
 
