@@ -1,0 +1,67 @@
+{
+  "name": "building",
+  "type": "CellComplex",
+  "description": "Two-floor building with 6 rooms per floor and rear staircase",
+  "units": "meters",
+  "topology": {
+    "vertices": 40,
+    "edges": 83,
+    "faces": 57,
+    "cells": 13
+  },
+  "centroid": { "x": 6.0, "y": 5.9, "z": 3.0 },
+  "bounding_box": {
+    "min": { "x": 0.0, "y": 0.0, "z": 0.0 },
+    "max": { "x": 12.0, "y": 14.0, "z": 6.0 }
+  },
+  "floors": [
+    {
+      "id": "floor_1",
+      "level": 1,
+      "z_range": [0, 3],
+      "rooms": [
+        { "id": "f1_r1", "label": "Room 1-1", "origin": [2, 2.5, 0], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [0, 4], "y": [0, 5], "z": [0, 3] } },
+        { "id": "f1_r2", "label": "Room 1-2", "origin": [6, 2.5, 0], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [4, 8], "y": [0, 5], "z": [0, 3] } },
+        { "id": "f1_r3", "label": "Room 1-3", "origin": [10, 2.5, 0], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [8, 12], "y": [0, 5], "z": [0, 3] } },
+        { "id": "f1_r4", "label": "Room 1-4", "origin": [2, 7.5, 0], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [0, 4], "y": [5, 10], "z": [0, 3] } },
+        { "id": "f1_r5", "label": "Room 1-5", "origin": [6, 7.5, 0], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [4, 8], "y": [5, 10], "z": [0, 3] } },
+        { "id": "f1_r6", "label": "Room 1-6", "origin": [10, 7.5, 0], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [8, 12], "y": [5, 10], "z": [0, 3] } }
+      ]
+    },
+    {
+      "id": "floor_2",
+      "level": 2,
+      "z_range": [3, 6],
+      "rooms": [
+        { "id": "f2_r1", "label": "Room 2-1", "origin": [2, 2.5, 3], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [0, 4], "y": [0, 5], "z": [3, 6] } },
+        { "id": "f2_r2", "label": "Room 2-2", "origin": [6, 2.5, 3], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [4, 8], "y": [0, 5], "z": [3, 6] } },
+        { "id": "f2_r3", "label": "Room 2-3", "origin": [10, 2.5, 3], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [8, 12], "y": [0, 5], "z": [3, 6] } },
+        { "id": "f2_r4", "label": "Room 2-4", "origin": [2, 7.5, 3], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [0, 4], "y": [5, 10], "z": [3, 6] } },
+        { "id": "f2_r5", "label": "Room 2-5", "origin": [6, 7.5, 3], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [4, 8], "y": [5, 10], "z": [3, 6] } },
+        { "id": "f2_r6", "label": "Room 2-6", "origin": [10, 7.5, 3], "width": 4, "depth": 5, "height": 3, "bounds": { "x": [8, 12], "y": [5, 10], "z": [3, 6] } }
+      ]
+    }
+  ],
+  "staircase": {
+    "id": "staircase",
+    "label": "Rear Staircase",
+    "origin": [6, 12, 0],
+    "width": 4,
+    "depth": 4,
+    "height": 6,
+    "bounds": { "x": [4, 8], "y": [10, 14], "z": [0, 6] },
+    "note": "Spans both floors, attached to the back of the building"
+  },
+  "vertices": [
+    [0.0, 5.0, 0.0], [4.0, 5.0, 0.0], [4.0, 0.0, 0.0], [0.0, 0.0, 0.0],
+    [4.0, 5.0, 3.0], [0.0, 5.0, 3.0], [4.0, 0.0, 3.0], [0.0, 0.0, 3.0],
+    [0.0, 10.0, 0.0], [4.0, 10.0, 0.0], [4.0, 10.0, 3.0], [0.0, 10.0, 3.0],
+    [8.0, 5.0, 0.0], [8.0, 0.0, 0.0], [8.0, 5.0, 3.0], [8.0, 0.0, 3.0],
+    [4.0, 5.0, 6.0], [0.0, 5.0, 6.0], [4.0, 0.0, 6.0], [0.0, 0.0, 6.0],
+    [8.0, 10.0, 0.0], [8.0, 10.0, 3.0], [4.0, 10.0, 6.0], [0.0, 10.0, 6.0],
+    [12.0, 5.0, 0.0], [12.0, 0.0, 0.0], [12.0, 5.0, 3.0], [12.0, 0.0, 3.0],
+    [8.0, 5.0, 6.0], [8.0, 0.0, 6.0], [4.0, 14.0, 0.0], [8.0, 14.0, 0.0],
+    [8.0, 14.0, 6.0], [4.0, 14.0, 6.0], [8.0, 10.0, 6.0], [12.0, 10.0, 0.0],
+    [12.0, 10.0, 3.0], [12.0, 5.0, 6.0], [12.0, 0.0, 6.0], [12.0, 10.0, 6.0]
+  ]
+}

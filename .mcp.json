@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "topologic": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["/Users/td3003/GitHub/topologicpy_MCP/server.py"]
+    }
+  }
+}
