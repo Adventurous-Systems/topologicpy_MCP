@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/config-schema.json",
+  "$comment": "Example Claude Code MCP configuration for TopologicPy server",
+  "mcpServers": {
+    "topologic": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/path/to/topologic-mcp-server",
+        "topologic-mcp"
+      ]
+    }
+  }
+}
