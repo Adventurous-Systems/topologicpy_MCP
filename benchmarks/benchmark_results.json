@@ -1,0 +1,610 @@
+[
+  {
+    "scenario": "simple_query",
+    "platform": "Claude Code (claude-sonnet-4-5-20250929)",
+    "steps": 2,
+    "total_input_tokens": 5641,
+    "total_output_tokens": 141,
+    "total_response_tokens": 55,
+    "grand_total_tokens": 5837,
+    "estimated_cost_usd": 0.0192,
+    "fits_context_window": true,
+    "context_window": 200000,
+    "context_usage_pct": 2.9,
+    "tool_definitions_overhead_pct": 91.7,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_cell_prism",
+        "input_tokens": 2771,
+        "output_tokens": 75,
+        "response_tokens": 16,
+        "total_tokens": 2862
+      },
+      {
+        "step": 2,
+        "tool": "query_topology",
+        "input_tokens": 2870,
+        "output_tokens": 66,
+        "response_tokens": 39,
+        "total_tokens": 2975
+      }
+    ]
+  },
+  {
+    "scenario": "simple_query",
+    "platform": "ChatGPT (gpt-4o)",
+    "steps": 2,
+    "total_input_tokens": 5641,
+    "total_output_tokens": 141,
+    "total_response_tokens": 55,
+    "grand_total_tokens": 5837,
+    "estimated_cost_usd": 0.0157,
+    "fits_context_window": true,
+    "context_window": 128000,
+    "context_usage_pct": 4.6,
+    "tool_definitions_overhead_pct": 91.7,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_cell_prism",
+        "input_tokens": 2771,
+        "output_tokens": 75,
+        "response_tokens": 16,
+        "total_tokens": 2862
+      },
+      {
+        "step": 2,
+        "tool": "query_topology",
+        "input_tokens": 2870,
+        "output_tokens": 66,
+        "response_tokens": 39,
+        "total_tokens": 2975
+      }
+    ]
+  },
+  {
+    "scenario": "simple_query",
+    "platform": "Ollama (llama3.1:8b local)",
+    "steps": 2,
+    "total_input_tokens": 5641,
+    "total_output_tokens": 141,
+    "total_response_tokens": 55,
+    "grand_total_tokens": 5837,
+    "estimated_cost_usd": 0.0,
+    "fits_context_window": true,
+    "context_window": 8192,
+    "context_usage_pct": 71.3,
+    "tool_definitions_overhead_pct": 91.7,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_cell_prism",
+        "input_tokens": 2771,
+        "output_tokens": 75,
+        "response_tokens": 16,
+        "total_tokens": 2862
+      },
+      {
+        "step": 2,
+        "tool": "query_topology",
+        "input_tokens": 2870,
+        "output_tokens": 66,
+        "response_tokens": 39,
+        "total_tokens": 2975
+      }
+    ]
+  },
+  {
+    "scenario": "simple_query",
+    "platform": "Ollama (qwen2.5:32b local)",
+    "steps": 2,
+    "total_input_tokens": 5641,
+    "total_output_tokens": 141,
+    "total_response_tokens": 55,
+    "grand_total_tokens": 5837,
+    "estimated_cost_usd": 0.0,
+    "fits_context_window": true,
+    "context_window": 32768,
+    "context_usage_pct": 17.8,
+    "tool_definitions_overhead_pct": 91.7,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_cell_prism",
+        "input_tokens": 2771,
+        "output_tokens": 75,
+        "response_tokens": 16,
+        "total_tokens": 2862
+      },
+      {
+        "step": 2,
+        "tool": "query_topology",
+        "input_tokens": 2870,
+        "output_tokens": 66,
+        "response_tokens": 39,
+        "total_tokens": 2975
+      }
+    ]
+  },
+  {
+    "scenario": "building_envelope",
+    "platform": "Claude Code (claude-sonnet-4-5-20250929)",
+    "steps": 9,
+    "total_input_tokens": 28200,
+    "total_output_tokens": 701,
+    "total_response_tokens": 147,
+    "grand_total_tokens": 29048,
+    "estimated_cost_usd": 0.0956,
+    "fits_context_window": true,
+    "context_window": 200000,
+    "context_usage_pct": 14.5,
+    "tool_definitions_overhead_pct": 82.9,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_vertex",
+        "input_tokens": 2769,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 2849
+      },
+      {
+        "step": 2,
+        "tool": "create_vertex",
+        "input_tokens": 2849,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 2929
+      },
+      {
+        "step": 3,
+        "tool": "create_vertex",
+        "input_tokens": 2929,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 3009
+      },
+      {
+        "step": 4,
+        "tool": "create_cell_prism",
+        "input_tokens": 3013,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3118
+      },
+      {
+        "step": 5,
+        "tool": "create_cell_prism",
+        "input_tokens": 3118,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3223
+      },
+      {
+        "step": 6,
+        "tool": "create_cell_prism",
+        "input_tokens": 3223,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3328
+      },
+      {
+        "step": 7,
+        "tool": "create_cellcomplex_by_cells",
+        "input_tokens": 3332,
+        "output_tokens": 80,
+        "response_tokens": 10,
+        "total_tokens": 3422
+      },
+      {
+        "step": 8,
+        "tool": "query_topology",
+        "input_tokens": 3426,
+        "output_tokens": 67,
+        "response_tokens": 43,
+        "total_tokens": 3536
+      },
+      {
+        "step": 9,
+        "tool": "create_graph_from_topology",
+        "input_tokens": 3541,
+        "output_tokens": 77,
+        "response_tokens": 16,
+        "total_tokens": 3634
+      }
+    ]
+  },
+  {
+    "scenario": "building_envelope",
+    "platform": "ChatGPT (gpt-4o)",
+    "steps": 9,
+    "total_input_tokens": 28200,
+    "total_output_tokens": 701,
+    "total_response_tokens": 147,
+    "grand_total_tokens": 29048,
+    "estimated_cost_usd": 0.0779,
+    "fits_context_window": true,
+    "context_window": 128000,
+    "context_usage_pct": 22.7,
+    "tool_definitions_overhead_pct": 82.9,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_vertex",
+        "input_tokens": 2769,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 2849
+      },
+      {
+        "step": 2,
+        "tool": "create_vertex",
+        "input_tokens": 2849,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 2929
+      },
+      {
+        "step": 3,
+        "tool": "create_vertex",
+        "input_tokens": 2929,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 3009
+      },
+      {
+        "step": 4,
+        "tool": "create_cell_prism",
+        "input_tokens": 3013,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3118
+      },
+      {
+        "step": 5,
+        "tool": "create_cell_prism",
+        "input_tokens": 3118,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3223
+      },
+      {
+        "step": 6,
+        "tool": "create_cell_prism",
+        "input_tokens": 3223,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3328
+      },
+      {
+        "step": 7,
+        "tool": "create_cellcomplex_by_cells",
+        "input_tokens": 3332,
+        "output_tokens": 80,
+        "response_tokens": 10,
+        "total_tokens": 3422
+      },
+      {
+        "step": 8,
+        "tool": "query_topology",
+        "input_tokens": 3426,
+        "output_tokens": 67,
+        "response_tokens": 43,
+        "total_tokens": 3536
+      },
+      {
+        "step": 9,
+        "tool": "create_graph_from_topology",
+        "input_tokens": 3541,
+        "output_tokens": 77,
+        "response_tokens": 16,
+        "total_tokens": 3634
+      }
+    ]
+  },
+  {
+    "scenario": "building_envelope",
+    "platform": "Ollama (llama3.1:8b local)",
+    "steps": 9,
+    "total_input_tokens": 28200,
+    "total_output_tokens": 701,
+    "total_response_tokens": 147,
+    "grand_total_tokens": 29048,
+    "estimated_cost_usd": 0.0,
+    "fits_context_window": false,
+    "context_window": 8192,
+    "context_usage_pct": 354.6,
+    "tool_definitions_overhead_pct": 82.9,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_vertex",
+        "input_tokens": 2769,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 2849
+      },
+      {
+        "step": 2,
+        "tool": "create_vertex",
+        "input_tokens": 2849,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 2929
+      },
+      {
+        "step": 3,
+        "tool": "create_vertex",
+        "input_tokens": 2929,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 3009
+      },
+      {
+        "step": 4,
+        "tool": "create_cell_prism",
+        "input_tokens": 3013,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3118
+      },
+      {
+        "step": 5,
+        "tool": "create_cell_prism",
+        "input_tokens": 3118,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3223
+      },
+      {
+        "step": 6,
+        "tool": "create_cell_prism",
+        "input_tokens": 3223,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3328
+      },
+      {
+        "step": 7,
+        "tool": "create_cellcomplex_by_cells",
+        "input_tokens": 3332,
+        "output_tokens": 80,
+        "response_tokens": 10,
+        "total_tokens": 3422
+      },
+      {
+        "step": 8,
+        "tool": "query_topology",
+        "input_tokens": 3426,
+        "output_tokens": 67,
+        "response_tokens": 43,
+        "total_tokens": 3536
+      },
+      {
+        "step": 9,
+        "tool": "create_graph_from_topology",
+        "input_tokens": 3541,
+        "output_tokens": 77,
+        "response_tokens": 16,
+        "total_tokens": 3634
+      }
+    ]
+  },
+  {
+    "scenario": "building_envelope",
+    "platform": "Ollama (qwen2.5:32b local)",
+    "steps": 9,
+    "total_input_tokens": 28200,
+    "total_output_tokens": 701,
+    "total_response_tokens": 147,
+    "grand_total_tokens": 29048,
+    "estimated_cost_usd": 0.0,
+    "fits_context_window": true,
+    "context_window": 32768,
+    "context_usage_pct": 88.6,
+    "tool_definitions_overhead_pct": 82.9,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_vertex",
+        "input_tokens": 2769,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 2849
+      },
+      {
+        "step": 2,
+        "tool": "create_vertex",
+        "input_tokens": 2849,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 2929
+      },
+      {
+        "step": 3,
+        "tool": "create_vertex",
+        "input_tokens": 2929,
+        "output_tokens": 71,
+        "response_tokens": 9,
+        "total_tokens": 3009
+      },
+      {
+        "step": 4,
+        "tool": "create_cell_prism",
+        "input_tokens": 3013,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3118
+      },
+      {
+        "step": 5,
+        "tool": "create_cell_prism",
+        "input_tokens": 3118,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3223
+      },
+      {
+        "step": 6,
+        "tool": "create_cell_prism",
+        "input_tokens": 3223,
+        "output_tokens": 88,
+        "response_tokens": 17,
+        "total_tokens": 3328
+      },
+      {
+        "step": 7,
+        "tool": "create_cellcomplex_by_cells",
+        "input_tokens": 3332,
+        "output_tokens": 80,
+        "response_tokens": 10,
+        "total_tokens": 3422
+      },
+      {
+        "step": 8,
+        "tool": "query_topology",
+        "input_tokens": 3426,
+        "output_tokens": 67,
+        "response_tokens": 43,
+        "total_tokens": 3536
+      },
+      {
+        "step": 9,
+        "tool": "create_graph_from_topology",
+        "input_tokens": 3541,
+        "output_tokens": 77,
+        "response_tokens": 16,
+        "total_tokens": 3634
+      }
+    ]
+  },
+  {
+    "scenario": "export_brep",
+    "platform": "Claude Code (claude-sonnet-4-5-20250929)",
+    "steps": 2,
+    "total_input_tokens": 5630,
+    "total_output_tokens": 139,
+    "total_response_tokens": 3770,
+    "grand_total_tokens": 9539,
+    "estimated_cost_usd": 0.0303,
+    "fits_context_window": true,
+    "context_window": 200000,
+    "context_usage_pct": 4.8,
+    "tool_definitions_overhead_pct": 56.1,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_cell_prism",
+        "input_tokens": 2769,
+        "output_tokens": 74,
+        "response_tokens": 15,
+        "total_tokens": 2858
+      },
+      {
+        "step": 2,
+        "tool": "export_brep",
+        "input_tokens": 2861,
+        "output_tokens": 65,
+        "response_tokens": 3755,
+        "total_tokens": 6681
+      }
+    ]
+  },
+  {
+    "scenario": "export_brep",
+    "platform": "ChatGPT (gpt-4o)",
+    "steps": 2,
+    "total_input_tokens": 5630,
+    "total_output_tokens": 139,
+    "total_response_tokens": 3770,
+    "grand_total_tokens": 9539,
+    "estimated_cost_usd": 0.0249,
+    "fits_context_window": true,
+    "context_window": 128000,
+    "context_usage_pct": 7.5,
+    "tool_definitions_overhead_pct": 56.1,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_cell_prism",
+        "input_tokens": 2769,
+        "output_tokens": 74,
+        "response_tokens": 15,
+        "total_tokens": 2858
+      },
+      {
+        "step": 2,
+        "tool": "export_brep",
+        "input_tokens": 2861,
+        "output_tokens": 65,
+        "response_tokens": 3755,
+        "total_tokens": 6681
+      }
+    ]
+  },
+  {
+    "scenario": "export_brep",
+    "platform": "Ollama (llama3.1:8b local)",
+    "steps": 2,
+    "total_input_tokens": 5630,
+    "total_output_tokens": 139,
+    "total_response_tokens": 3770,
+    "grand_total_tokens": 9539,
+    "estimated_cost_usd": 0.0,
+    "fits_context_window": false,
+    "context_window": 8192,
+    "context_usage_pct": 116.4,
+    "tool_definitions_overhead_pct": 56.1,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_cell_prism",
+        "input_tokens": 2769,
+        "output_tokens": 74,
+        "response_tokens": 15,
+        "total_tokens": 2858
+      },
+      {
+        "step": 2,
+        "tool": "export_brep",
+        "input_tokens": 2861,
+        "output_tokens": 65,
+        "response_tokens": 3755,
+        "total_tokens": 6681
+      }
+    ]
+  },
+  {
+    "scenario": "export_brep",
+    "platform": "Ollama (qwen2.5:32b local)",
+    "steps": 2,
+    "total_input_tokens": 5630,
+    "total_output_tokens": 139,
+    "total_response_tokens": 3770,
+    "grand_total_tokens": 9539,
+    "estimated_cost_usd": 0.0,
+    "fits_context_window": true,
+    "context_window": 32768,
+    "context_usage_pct": 29.1,
+    "tool_definitions_overhead_pct": 56.1,
+    "step_details": [
+      {
+        "step": 1,
+        "tool": "create_cell_prism",
+        "input_tokens": 2769,
+        "output_tokens": 74,
+        "response_tokens": 15,
+        "total_tokens": 2858
+      },
+      {
+        "step": 2,
+        "tool": "export_brep",
+        "input_tokens": 2861,
+        "output_tokens": 65,
+        "response_tokens": 3755,
+        "total_tokens": 6681
+      }
+    ]
+  }
+]

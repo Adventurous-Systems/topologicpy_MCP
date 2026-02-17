@@ -88,12 +88,10 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[TopologyStore]:
 
 mcp = FastMCP(
     "topologic",
-    description=(
-        "MCP server for TopologicPy — a spatial modeling library for "
-        "creating hierarchical, topological representations of architectural "
-        "spaces, buildings, and artefacts using non-manifold topology (NMT). "
-        "Supports Vertex, Edge, Wire, Face, Shell, Cell, CellComplex, Cluster, "
-        "Graph, Dictionary, and Boolean operations, plus IFC/OBJ/BREP import/export."
+    instructions=(
+        "TopologicPy spatial modeling: create/query/transform/export 3D "
+        "topological models (Vertex, Edge, Wire, Face, Shell, Cell, "
+        "CellComplex, Cluster, Graph). Supports boolean ops and IFC/OBJ/BREP I/O."
     ),
     lifespan=app_lifespan,
     dependencies=["topologicpy"],
@@ -112,17 +110,7 @@ def create_vertex(
     y: float = 0.0,
     z: float = 0.0,
 ) -> str:
-    """Create a Vertex (point) at the given coordinates and store it with the given name.
-
-    Args:
-        name: Unique name to reference this vertex later.
-        x: X coordinate. Default 0.
-        y: Y coordinate. Default 0.
-        z: Z coordinate. Default 0.
-
-    Returns:
-        Confirmation with vertex details.
-    """
+    """Create a Vertex (point) at (x,y,z) and store it by name."""
     from topologicpy.Vertex import Vertex
     store: TopologyStore = ctx.request_context.lifespan_context
     v = Vertex.ByCoordinates(x, y, z)
@@ -138,17 +126,7 @@ def create_edge(
     end_vertex: str,
     tolerance: float = 0.0001,
 ) -> str:
-    """Create an Edge (line segment) between two named vertices.
-
-    Args:
-        name: Unique name for this edge.
-        start_vertex: Name of the start vertex.
-        end_vertex: Name of the end vertex.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with edge details.
-    """
+    """Create an Edge (line segment) between two named vertices."""
     from topologicpy.Edge import Edge
     store: TopologyStore = ctx.request_context.lifespan_context
     sv = store.get(start_vertex)
@@ -166,17 +144,7 @@ def create_wire(
     close: bool = True,
     tolerance: float = 0.0001,
 ) -> str:
-    """Create a Wire (polyline) from an ordered list of named vertices.
-
-    Args:
-        name: Unique name for this wire.
-        vertex_names: Ordered list of vertex names to connect.
-        close: If True, close the wire (connect last to first). Default True.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with wire details.
-    """
+    """Create a Wire (polyline) from an ordered list of named vertices. Set close=True to connect last to first."""
     from topologicpy.Wire import Wire
     store: TopologyStore = ctx.request_context.lifespan_context
     vertices = [store.get(vn) for vn in vertex_names]
@@ -192,16 +160,7 @@ def create_face_by_wire(
     wire_name: str,
     tolerance: float = 0.0001,
 ) -> str:
-    """Create a Face from a closed Wire (external boundary).
-
-    Args:
-        name: Unique name for this face.
-        wire_name: Name of the closed wire to use as boundary.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with face details.
-    """
+    """Create a Face from a named closed Wire (external boundary)."""
     from topologicpy.Face import Face
     store: TopologyStore = ctx.request_context.lifespan_context
     wire = store.get(wire_name)
@@ -211,75 +170,40 @@ def create_face_by_wire(
 
 
 @mcp.tool()
-def create_face_rectangle(
+def create_face_shape(
     ctx: Context,
     name: str,
+    shape: str,
     origin_name: str | None = None,
     width: float = 1.0,
     length: float = 1.0,
-    direction: list[float] | None = None,
-    tolerance: float = 0.0001,
-) -> str:
-    """Create a rectangular Face.
-
-    Args:
-        name: Unique name for this face.
-        origin_name: Name of origin vertex. Default creates at (0,0,0).
-        width: Width of rectangle. Default 1.0.
-        length: Length of rectangle. Default 1.0.
-        direction: Normal direction as [x,y,z]. Default [0,0,1].
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with face details.
-    """
-    from topologicpy.Face import Face
-    from topologicpy.Vertex import Vertex
-    store: TopologyStore = ctx.request_context.lifespan_context
-    origin = store.get(origin_name) if origin_name else Vertex.ByCoordinates(0, 0, 0)
-    direction = direction or [0, 0, 1]
-    f = Face.Rectangle(
-        origin=origin, width=width, length=length,
-        direction=direction, tolerance=tolerance,
-    )
-    store.put(name, f, {"width": width, "length": length, "direction": direction})
-    return f"Created rectangular Face '{name}' ({width} x {length})"
-
-
-@mcp.tool()
-def create_face_circle(
-    ctx: Context,
-    name: str,
-    origin_name: str | None = None,
     radius: float = 0.5,
     sides: int = 32,
     direction: list[float] | None = None,
     tolerance: float = 0.0001,
 ) -> str:
-    """Create a circular Face (approximated polygon).
-
-    Args:
-        name: Unique name for this face.
-        origin_name: Name of origin vertex. Default creates at (0,0,0).
-        radius: Radius of the circle. Default 0.5.
-        sides: Number of polygon sides. Default 32.
-        direction: Normal direction as [x,y,z]. Default [0,0,1].
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with face details.
-    """
+    """Create a Face. shape: "rectangle"|"circle". Rectangle uses width/length, circle uses radius/sides."""
     from topologicpy.Face import Face
     from topologicpy.Vertex import Vertex
     store: TopologyStore = ctx.request_context.lifespan_context
     origin = store.get(origin_name) if origin_name else Vertex.ByCoordinates(0, 0, 0)
     direction = direction or [0, 0, 1]
-    f = Face.Circle(
-        origin=origin, radius=radius, sides=sides,
-        direction=direction, tolerance=tolerance,
-    )
-    store.put(name, f, {"radius": radius, "sides": sides})
-    return f"Created circular Face '{name}' (radius={radius}, sides={sides})"
+    if shape == "rectangle":
+        f = Face.Rectangle(
+            origin=origin, width=width, length=length,
+            direction=direction, tolerance=tolerance,
+        )
+        store.put(name, f, {"shape": "rectangle", "width": width, "length": length, "direction": direction})
+        return f"Created rectangular Face '{name}' ({width} x {length})"
+    elif shape == "circle":
+        f = Face.Circle(
+            origin=origin, radius=radius, sides=sides,
+            direction=direction, tolerance=tolerance,
+        )
+        store.put(name, f, {"shape": "circle", "radius": radius, "sides": sides})
+        return f"Created circular Face '{name}' (radius={radius}, sides={sides})"
+    else:
+        return f"Invalid shape '{shape}'. Use 'rectangle' or 'circle'."
 
 
 @mcp.tool()
@@ -289,18 +213,7 @@ def create_cell_by_faces(
     face_names: list[str],
     tolerance: float = 0.0001,
 ) -> str:
-    """Create a Cell (3D solid volume) from a list of named Faces.
-
-    The faces must form a closed, watertight shell.
-
-    Args:
-        name: Unique name for this cell.
-        face_names: List of face names forming the cell boundary.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with cell details.
-    """
+    """Create a Cell (3D solid) from named Faces. Faces must form a closed watertight shell."""
     from topologicpy.Cell import Cell
     store: TopologyStore = ctx.request_context.lifespan_context
     faces = [store.get(fn) for fn in face_names]
@@ -310,77 +223,40 @@ def create_cell_by_faces(
 
 
 @mcp.tool()
-def create_cell_prism(
+def create_cell_shape(
     ctx: Context,
     name: str,
+    shape: str,
     origin_name: str | None = None,
     width: float = 1.0,
     length: float = 1.0,
     height: float = 1.0,
-    placement: str = "center",
-    tolerance: float = 0.0001,
-) -> str:
-    """Create a rectangular prism (box) Cell.
-
-    Args:
-        name: Unique name for this cell.
-        origin_name: Name of origin vertex. Default at (0,0,0).
-        width: Width (X). Default 1.0.
-        length: Length (Y). Default 1.0.
-        height: Height (Z). Default 1.0.
-        placement: "center", "bottom", or "lowerleft". Default "center".
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with cell details.
-    """
-    from topologicpy.Cell import Cell
-    from topologicpy.Vertex import Vertex
-    store: TopologyStore = ctx.request_context.lifespan_context
-    origin = store.get(origin_name) if origin_name else Vertex.ByCoordinates(0, 0, 0)
-    c = Cell.Prism(
-        origin=origin, width=width, length=length, height=height,
-        placement=placement, tolerance=tolerance,
-    )
-    store.put(name, c, {"width": width, "length": length, "height": height})
-    return f"Created prism Cell '{name}' ({width} x {length} x {height})"
-
-
-@mcp.tool()
-def create_cell_cylinder(
-    ctx: Context,
-    name: str,
-    origin_name: str | None = None,
     radius: float = 0.5,
-    height: float = 1.0,
     sides: int = 32,
     placement: str = "center",
     tolerance: float = 0.0001,
 ) -> str:
-    """Create a cylindrical Cell.
-
-    Args:
-        name: Unique name for this cell.
-        origin_name: Name of origin vertex. Default at (0,0,0).
-        radius: Radius of the cylinder. Default 0.5.
-        height: Height of the cylinder. Default 1.0.
-        sides: Number of polygon sides. Default 32.
-        placement: "center", "bottom", or "lowerleft". Default "center".
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with cell details.
-    """
+    """Create a Cell. shape: "prism"|"cylinder". Prism uses width/length/height, cylinder uses radius/height/sides."""
     from topologicpy.Cell import Cell
     from topologicpy.Vertex import Vertex
     store: TopologyStore = ctx.request_context.lifespan_context
     origin = store.get(origin_name) if origin_name else Vertex.ByCoordinates(0, 0, 0)
-    c = Cell.Cylinder(
-        origin=origin, radius=radius, height=height, sides=sides,
-        placement=placement, tolerance=tolerance,
-    )
-    store.put(name, c, {"radius": radius, "height": height, "sides": sides})
-    return f"Created cylindrical Cell '{name}' (r={radius}, h={height})"
+    if shape == "prism":
+        c = Cell.Prism(
+            origin=origin, width=width, length=length, height=height,
+            placement=placement, tolerance=tolerance,
+        )
+        store.put(name, c, {"shape": "prism", "width": width, "length": length, "height": height})
+        return f"Created prism Cell '{name}' ({width} x {length} x {height})"
+    elif shape == "cylinder":
+        c = Cell.Cylinder(
+            origin=origin, radius=radius, height=height, uSides=sides,
+            placement=placement, tolerance=tolerance,
+        )
+        store.put(name, c, {"shape": "cylinder", "radius": radius, "height": height, "sides": sides})
+        return f"Created cylindrical Cell '{name}' (r={radius}, h={height})"
+    else:
+        return f"Invalid shape '{shape}'. Use 'prism' or 'cylinder'."
 
 
 @mcp.tool()
@@ -390,18 +266,7 @@ def create_cellcomplex_by_cells(
     cell_names: list[str],
     tolerance: float = 0.0001,
 ) -> str:
-    """Create a CellComplex from a list of named Cells.
-
-    Cells are merged, sharing faces/edges/vertices at intersections.
-
-    Args:
-        name: Unique name for this cell complex.
-        cell_names: List of cell names to merge.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with cell complex details.
-    """
+    """Create a CellComplex by merging named Cells, sharing faces/edges/vertices at intersections."""
     from topologicpy.CellComplex import CellComplex
     store: TopologyStore = ctx.request_context.lifespan_context
     cells = [store.get(cn) for cn in cell_names]
@@ -416,15 +281,7 @@ def create_cluster(
     name: str,
     topology_names: list[str],
 ) -> str:
-    """Create a Cluster (unstructured collection) from named topologies.
-
-    Args:
-        name: Unique name for this cluster.
-        topology_names: List of topology names to include.
-
-    Returns:
-        Confirmation with cluster details.
-    """
+    """Create a Cluster (unstructured collection) from named topologies."""
     from topologicpy.Cluster import Cluster
     store: TopologyStore = ctx.request_context.lifespan_context
     topos = [store.get(tn) for tn in topology_names]
@@ -438,114 +295,35 @@ def create_cluster(
 # ═══════════════════════════════════════════════════════════════════════════
 
 @mcp.tool()
-def boolean_union(
+def boolean(
     ctx: Context,
     name: str,
+    operation: str,
     topology_a: str,
-    topology_b: str,
+    topology_b: str | None = None,
     tolerance: float = 0.0001,
 ) -> str:
-    """Compute the Boolean union of two topologies.
-
-    Args:
-        name: Name for the resulting topology.
-        topology_a: Name of the first topology.
-        topology_b: Name of the second topology.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation of the union result.
-    """
+    """Boolean op: "union"|"difference"|"intersect"|"self_merge". topology_b not needed for self_merge."""
     from topologicpy.Topology import Topology
     store: TopologyStore = ctx.request_context.lifespan_context
     a = store.get(topology_a)
+    if operation == "self_merge":
+        result = Topology.SelfMerge(a, tolerance=tolerance)
+        store.put(name, result, {"operation": "self_merge", "source": topology_a})
+        return f"Created '{name}' = SelfMerge('{topology_a}') → {Topology.TypeAsString(result)}"
+    if topology_b is None:
+        return "topology_b is required for union/difference/intersect operations."
     b = store.get(topology_b)
-    result = Topology.Union(a, b, tolerance=tolerance)
-    store.put(name, result, {"operation": "union", "a": topology_a, "b": topology_b})
-    return f"Created '{name}' = Union('{topology_a}', '{topology_b}') → {Topology.TypeAsString(result)}"
-
-
-@mcp.tool()
-def boolean_difference(
-    ctx: Context,
-    name: str,
-    topology_a: str,
-    topology_b: str,
-    tolerance: float = 0.0001,
-) -> str:
-    """Compute the Boolean difference (A minus B) of two topologies.
-
-    Args:
-        name: Name for the resulting topology.
-        topology_a: Name of the topology to subtract from.
-        topology_b: Name of the topology to subtract.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation of the difference result.
-    """
-    from topologicpy.Topology import Topology
-    store: TopologyStore = ctx.request_context.lifespan_context
-    a = store.get(topology_a)
-    b = store.get(topology_b)
-    result = Topology.Difference(a, b, tolerance=tolerance)
-    store.put(name, result, {"operation": "difference", "a": topology_a, "b": topology_b})
-    return f"Created '{name}' = Difference('{topology_a}', '{topology_b}') → {Topology.TypeAsString(result)}"
-
-
-@mcp.tool()
-def boolean_intersect(
-    ctx: Context,
-    name: str,
-    topology_a: str,
-    topology_b: str,
-    tolerance: float = 0.0001,
-) -> str:
-    """Compute the Boolean intersection of two topologies.
-
-    Args:
-        name: Name for the resulting topology.
-        topology_a: Name of the first topology.
-        topology_b: Name of the second topology.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation of the intersection result.
-    """
-    from topologicpy.Topology import Topology
-    store: TopologyStore = ctx.request_context.lifespan_context
-    a = store.get(topology_a)
-    b = store.get(topology_b)
-    result = Topology.Intersect(a, b, tolerance=tolerance)
-    store.put(name, result, {"operation": "intersect", "a": topology_a, "b": topology_b})
-    return f"Created '{name}' = Intersect('{topology_a}', '{topology_b}') → {Topology.TypeAsString(result)}"
-
-
-@mcp.tool()
-def self_merge(
-    ctx: Context,
-    name: str,
-    topology_name: str,
-    tolerance: float = 0.0001,
-) -> str:
-    """Merge a topology with itself to resolve self-intersections and shared boundaries.
-
-    This is essential for creating valid CellComplexes from overlapping cells.
-
-    Args:
-        name: Name for the merged result.
-        topology_name: Name of the topology to self-merge.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation of the merge result.
-    """
-    from topologicpy.Topology import Topology
-    store: TopologyStore = ctx.request_context.lifespan_context
-    topo = store.get(topology_name)
-    result = Topology.SelfMerge(topo, tolerance=tolerance)
-    store.put(name, result, {"operation": "self_merge", "source": topology_name})
-    return f"Created '{name}' = SelfMerge('{topology_name}') → {Topology.TypeAsString(result)}"
+    ops = {
+        "union": Topology.Union,
+        "difference": Topology.Difference,
+        "intersect": Topology.Intersect,
+    }
+    if operation not in ops:
+        return f"Invalid operation '{operation}'. Use 'union', 'difference', 'intersect', or 'self_merge'."
+    result = ops[operation](a, b, tolerance=tolerance)
+    store.put(name, result, {"operation": operation, "a": topology_a, "b": topology_b})
+    return f"Created '{name}' = {operation.title()}('{topology_a}', '{topology_b}') → {Topology.TypeAsString(result)}"
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -553,97 +331,43 @@ def self_merge(
 # ═══════════════════════════════════════════════════════════════════════════
 
 @mcp.tool()
-def translate(
+def transform(
     ctx: Context,
     name: str,
     topology_name: str,
+    operation: str,
     x: float = 0.0,
     y: float = 0.0,
     z: float = 0.0,
-) -> str:
-    """Translate (move) a topology by the given vector.
-
-    Args:
-        name: Name for the translated copy.
-        topology_name: Name of the topology to translate.
-        x: Translation in X. Default 0.
-        y: Translation in Y. Default 0.
-        z: Translation in Z. Default 0.
-
-    Returns:
-        Confirmation of the translation.
-    """
-    from topologicpy.Topology import Topology
-    store: TopologyStore = ctx.request_context.lifespan_context
-    topo = store.get(topology_name)
-    result = Topology.Translate(topo, x, y, z)
-    store.put(name, result, {"operation": "translate", "source": topology_name, "vector": [x, y, z]})
-    return f"Created '{name}' = Translate('{topology_name}', [{x}, {y}, {z}])"
-
-
-@mcp.tool()
-def rotate(
-    ctx: Context,
-    name: str,
-    topology_name: str,
     origin_name: str | None = None,
     axis: list[float] | None = None,
     angle: float = 0.0,
-) -> str:
-    """Rotate a topology around an axis through an origin point.
-
-    Args:
-        name: Name for the rotated copy.
-        topology_name: Name of the topology to rotate.
-        origin_name: Name of the rotation center vertex. Default (0,0,0).
-        axis: Rotation axis as [x,y,z]. Default [0,0,1].
-        angle: Rotation angle in degrees. Default 0.
-
-    Returns:
-        Confirmation of the rotation.
-    """
-    from topologicpy.Topology import Topology
-    from topologicpy.Vertex import Vertex
-    store: TopologyStore = ctx.request_context.lifespan_context
-    topo = store.get(topology_name)
-    origin = store.get(origin_name) if origin_name else Vertex.ByCoordinates(0, 0, 0)
-    axis = axis or [0, 0, 1]
-    result = Topology.Rotate(topo, origin=origin, axis=axis, angle=angle)
-    store.put(name, result, {"operation": "rotate", "source": topology_name, "angle": angle})
-    return f"Created '{name}' = Rotate('{topology_name}', angle={angle}°, axis={axis})"
-
-
-@mcp.tool()
-def scale(
-    ctx: Context,
-    name: str,
-    topology_name: str,
-    origin_name: str | None = None,
     x_factor: float = 1.0,
     y_factor: float = 1.0,
     z_factor: float = 1.0,
 ) -> str:
-    """Scale a topology relative to an origin point.
-
-    Args:
-        name: Name for the scaled copy.
-        topology_name: Name of the topology to scale.
-        origin_name: Name of the scale center vertex. Default (0,0,0).
-        x_factor: Scale factor in X. Default 1.0.
-        y_factor: Scale factor in Y. Default 1.0.
-        z_factor: Scale factor in Z. Default 1.0.
-
-    Returns:
-        Confirmation of the scaling.
-    """
+    """Transform topology. operation: "translate"|"rotate"|"scale". Translate uses x/y/z, rotate uses origin/axis/angle, scale uses origin/x_factor/y_factor/z_factor."""
     from topologicpy.Topology import Topology
     from topologicpy.Vertex import Vertex
     store: TopologyStore = ctx.request_context.lifespan_context
     topo = store.get(topology_name)
-    origin = store.get(origin_name) if origin_name else Vertex.ByCoordinates(0, 0, 0)
-    result = Topology.Scale(topo, origin=origin, x=x_factor, y=y_factor, z=z_factor)
-    store.put(name, result, {"operation": "scale", "source": topology_name})
-    return f"Created '{name}' = Scale('{topology_name}', factors=[{x_factor}, {y_factor}, {z_factor}])"
+    if operation == "translate":
+        result = Topology.Translate(topo, x, y, z)
+        store.put(name, result, {"operation": "translate", "source": topology_name, "vector": [x, y, z]})
+        return f"Created '{name}' = Translate('{topology_name}', [{x}, {y}, {z}])"
+    elif operation == "rotate":
+        origin = store.get(origin_name) if origin_name else Vertex.ByCoordinates(0, 0, 0)
+        axis = axis or [0, 0, 1]
+        result = Topology.Rotate(topo, origin=origin, axis=axis, angle=angle)
+        store.put(name, result, {"operation": "rotate", "source": topology_name, "angle": angle})
+        return f"Created '{name}' = Rotate('{topology_name}', angle={angle}°, axis={axis})"
+    elif operation == "scale":
+        origin = store.get(origin_name) if origin_name else Vertex.ByCoordinates(0, 0, 0)
+        result = Topology.Scale(topo, origin=origin, x=x_factor, y=y_factor, z=z_factor)
+        store.put(name, result, {"operation": "scale", "source": topology_name})
+        return f"Created '{name}' = Scale('{topology_name}', factors=[{x_factor}, {y_factor}, {z_factor}])"
+    else:
+        return f"Invalid operation '{operation}'. Use 'translate', 'rotate', or 'scale'."
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -652,33 +376,21 @@ def scale(
 
 @mcp.tool()
 def list_topologies(ctx: Context) -> str:
-    """List all named topologies currently in the session store.
-
-    Returns:
-        JSON array of objects with name, type, and metadata.
-    """
+    """List all named topologies in the session (name, type, metadata)."""
     store: TopologyStore = ctx.request_context.lifespan_context
     items = store.list_all()
     if not items:
-        return "Session store is empty. Create some topologies first."
-    return json.dumps(items, indent=2)
+        return "Session empty."
+    return json.dumps(items, separators=(',', ':'))
 
 
 @mcp.tool()
 def query_topology(
     ctx: Context,
     topology_name: str,
+    detail: str = "summary",
 ) -> str:
-    """Get detailed information about a named topology.
-
-    Returns type, sub-topology counts, centroid, bounding box, and volume/area.
-
-    Args:
-        topology_name: Name of the topology to query.
-
-    Returns:
-        JSON object with topology details.
-    """
+    """Query a named topology. detail: "summary" (one-line type+counts) or "full" (type, counts, centroid, bounding box, volume/area)."""
     from topologicpy.Topology import Topology
     from topologicpy.Vertex import Vertex
     from topologicpy.Cell import Cell
@@ -687,33 +399,33 @@ def query_topology(
     topo = store.get(topology_name)
     topo_type = Topology.TypeAsString(topo)
 
-    info: dict[str, Any] = {
-        "name": topology_name,
-        "type": topo_type,
-    }
-
-    # Sub-topology counts
     vertices = Topology.Vertices(topo) or []
     edges = Topology.Edges(topo) or []
     faces = Topology.Faces(topo) or []
     cells = Topology.Cells(topo) or []
-    info["counts"] = {
-        "vertices": len(vertices),
-        "edges": len(edges),
-        "faces": len(faces),
-        "cells": len(cells),
+
+    if detail == "summary":
+        return f"{topology_name}: {topo_type} (V:{len(vertices)} E:{len(edges)} F:{len(faces)} C:{len(cells)})"
+
+    info: dict[str, Any] = {
+        "name": topology_name,
+        "type": topo_type,
+        "counts": {
+            "vertices": len(vertices),
+            "edges": len(edges),
+            "faces": len(faces),
+            "cells": len(cells),
+        },
     }
 
-    # Centroid
     centroid = Topology.Centroid(topo)
     if centroid:
         info["centroid"] = {
-            "x": round(Vertex.X(centroid), 6),
-            "y": round(Vertex.Y(centroid), 6),
-            "z": round(Vertex.Z(centroid), 6),
+            "x": round(Vertex.X(centroid), 2),
+            "y": round(Vertex.Y(centroid), 2),
+            "z": round(Vertex.Z(centroid), 2),
         }
 
-    # Bounding box
     try:
         bb = Topology.BoundingBox(topo)
         if bb:
@@ -721,23 +433,21 @@ def query_topology(
     except Exception:
         pass
 
-    # Volume (for cells)
     if topo_type == "Cell":
         try:
             vol = Cell.Volume(topo)
-            info["volume"] = round(vol, 6)
+            info["volume"] = round(vol, 2)
         except Exception:
             pass
 
-    # Area (for faces)
     if topo_type == "Face":
         try:
             area = Face.Area(topo)
-            info["area"] = round(area, 6)
+            info["area"] = round(area, 2)
         except Exception:
             pass
 
-    return json.dumps(info, indent=2)
+    return json.dumps(info, separators=(',', ':'))
 
 
 @mcp.tool()
@@ -746,15 +456,7 @@ def get_vertices(
     topology_name: str,
     mantissa: int = 6,
 ) -> str:
-    """Get all vertex coordinates of a topology.
-
-    Args:
-        topology_name: Name of the topology.
-        mantissa: Decimal places for coordinates. Default 6.
-
-    Returns:
-        JSON array of [x, y, z] coordinates.
-    """
+    """Get all vertex coordinates of a named topology as [[x,y,z], ...]."""
     from topologicpy.Topology import Topology
     from topologicpy.Vertex import Vertex
     store: TopologyStore = ctx.request_context.lifespan_context
@@ -774,18 +476,7 @@ def get_sub_topologies(
     sub_type: str,
     store_with_prefix: str | None = None,
 ) -> str:
-    """Extract sub-topologies (vertices, edges, faces, cells) from a topology.
-
-    Optionally stores each sub-topology with a numbered name prefix.
-
-    Args:
-        topology_name: Name of the parent topology.
-        sub_type: Type to extract — "vertex", "edge", "wire", "face", "shell", "cell".
-        store_with_prefix: If provided, store each sub-topology as "{prefix}_0", "{prefix}_1", etc.
-
-    Returns:
-        Count of extracted sub-topologies and their names if stored.
-    """
+    """Extract sub-topologies from a topology. sub_type: "vertex"|"edge"|"wire"|"face"|"shell"|"cell". Optionally store with prefix."""
     from topologicpy.Topology import Topology
     store: TopologyStore = ctx.request_context.lifespan_context
     topo = store.get(topology_name)
@@ -814,7 +505,7 @@ def get_sub_topologies(
     result = {"count": len(subs), "sub_type": sub_type}
     if names:
         result["stored_as"] = names
-    return json.dumps(result, indent=2)
+    return json.dumps(result, separators=(',', ':'))
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -827,43 +518,23 @@ def create_graph_from_topology(
     name: str,
     topology_name: str,
     direct: bool = True,
-    via_shared_faces: bool = False,
-    via_shared_edges: bool = False,
-    via_shared_vertices: bool = False,
-    to_exterior_faces: bool = False,
-    to_exterior_edges: bool = False,
-    to_exterior_vertices: bool = False,
+    via_shared_topologies: bool = False,
+    via_shared_apertures: bool = False,
+    to_exterior_topologies: bool = False,
+    to_exterior_apertures: bool = False,
     tolerance: float = 0.0001,
 ) -> str:
-    """Create a dual Graph from a topology (e.g. adjacency graph of cells in a CellComplex).
-
-    Args:
-        name: Name for the resulting graph.
-        topology_name: Name of the source topology.
-        direct: Include direct adjacency. Default True.
-        via_shared_faces: Connect through shared faces. Default False.
-        via_shared_edges: Connect through shared edges. Default False.
-        via_shared_vertices: Connect through shared vertices. Default False.
-        to_exterior_faces: Include exterior face connections. Default False.
-        to_exterior_edges: Include exterior edge connections. Default False.
-        to_exterior_vertices: Include exterior vertex connections. Default False.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with graph details.
-    """
+    """Create a dual/adjacency Graph from a topology (e.g. cell adjacency in a CellComplex). Configure connectivity via shared topologies/apertures."""
     from topologicpy.Graph import Graph
     store: TopologyStore = ctx.request_context.lifespan_context
     topo = store.get(topology_name)
     g = Graph.ByTopology(
         topo,
         direct=direct,
-        viaSharedTopologies=via_shared_faces,
-        viaSharedEdges=via_shared_edges,
-        viaSharedVertices=via_shared_vertices,
-        toExteriorTopologies=to_exterior_faces,
-        toExteriorEdges=to_exterior_edges,
-        toExteriorVertices=to_exterior_vertices,
+        viaSharedTopologies=via_shared_topologies,
+        viaSharedApertures=via_shared_apertures,
+        toExteriorTopologies=to_exterior_topologies,
+        toExteriorApertures=to_exterior_apertures,
         tolerance=tolerance,
     )
     verts = Graph.Vertices(g) or []
@@ -881,18 +552,7 @@ def graph_shortest_path(
     end_vertex_name: str,
     tolerance: float = 0.0001,
 ) -> str:
-    """Find the shortest path between two vertices in a graph.
-
-    Args:
-        name: Name to store the resulting path topology.
-        graph_name: Name of the graph.
-        start_vertex_name: Name of the start vertex.
-        end_vertex_name: Name of the end vertex.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Path details (length, vertex count).
-    """
+    """Find the shortest path between two named vertices in a graph."""
     from topologicpy.Graph import Graph
     from topologicpy.Topology import Topology
     store: TopologyStore = ctx.request_context.lifespan_context
@@ -912,259 +572,132 @@ def graph_shortest_path(
 # ═══════════════════════════════════════════════════════════════════════════
 
 @mcp.tool()
-def set_dictionary(
+def dictionary(
     ctx: Context,
     topology_name: str,
-    data: dict[str, Any],
+    action: str = "get",
+    data: dict[str, Any] | None = None,
 ) -> str:
-    """Attach a dictionary (key-value metadata) to a topology.
-
-    Args:
-        topology_name: Name of the topology.
-        data: Dictionary of key-value pairs to attach.
-
-    Returns:
-        Confirmation.
-    """
+    """Get or set metadata. action: "get"|"set". data required for set."""
     from topologicpy.Topology import Topology
     from topologicpy.Dictionary import Dictionary
     store: TopologyStore = ctx.request_context.lifespan_context
     topo = store.get(topology_name)
-    keys = list(data.keys())
-    values = list(data.values())
-    d = Dictionary.ByKeysValues(keys, values)
-    topo = Topology.SetDictionary(topo, d)
-    store.objects[topology_name] = topo  # update in-place
-    return f"Set dictionary on '{topology_name}' with keys: {keys}"
-
-
-@mcp.tool()
-def get_dictionary(
-    ctx: Context,
-    topology_name: str,
-) -> str:
-    """Get the dictionary (metadata) attached to a topology.
-
-    Args:
-        topology_name: Name of the topology.
-
-    Returns:
-        JSON object of the dictionary contents.
-    """
-    from topologicpy.Topology import Topology
-    from topologicpy.Dictionary import Dictionary
-    store: TopologyStore = ctx.request_context.lifespan_context
-    topo = store.get(topology_name)
-    d = Topology.Dictionary(topo)
-    if d is None:
-        return f"No dictionary attached to '{topology_name}'"
-    keys = Dictionary.Keys(d) or []
-    values = Dictionary.Values(d) or []
-    return json.dumps(dict(zip(keys, values)), indent=2, default=str)
+    if action == "set":
+        if not data:
+            return "data is required for action='set'."
+        keys = list(data.keys())
+        values = list(data.values())
+        d = Dictionary.ByKeysValues(keys, values)
+        topo = Topology.SetDictionary(topo, d)
+        store.objects[topology_name] = topo
+        return f"Set dictionary on '{topology_name}' with keys: {keys}"
+    elif action == "get":
+        d = Topology.Dictionary(topo)
+        if d is None:
+            return f"No dictionary attached to '{topology_name}'"
+        keys = Dictionary.Keys(d) or []
+        values = Dictionary.Values(d) or []
+        return json.dumps(dict(zip(keys, values)), separators=(',', ':'), default=str)
+    else:
+        return f"Invalid action '{action}'. Use 'get' or 'set'."
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# TOOLS — Import / Export
+# TOOLS — Import / Export (merged: brep+obj+ifc)
 # ═══════════════════════════════════════════════════════════════════════════
 
 @mcp.tool()
-def export_brep(
+def export_topology(
     ctx: Context,
     topology_name: str,
-    file_path: str | None = None,
+    file_path: str,
+    format: str,
+    transpose: bool = False,
+    building_name: str = "Default Building",
+    tolerance: float = 0.0001,
 ) -> str:
-    """Export a topology as a BREP string (OpenCASCADE format).
-
-    Args:
-        topology_name: Name of the topology to export.
-        file_path: Optional file path to save the BREP. If None, returns the string.
-
-    Returns:
-        The BREP string or confirmation of file save.
-    """
+    """Export topology to file. format: "brep"|"obj"|"ifc"."""
     from topologicpy.Topology import Topology
     store: TopologyStore = ctx.request_context.lifespan_context
     topo = store.get(topology_name)
-    brep_string = Topology.BREPString(topo)
-    if file_path:
+    if format == "brep":
+        brep_string = Topology.BREPString(topo)
         with open(file_path, "w") as f:
             f.write(brep_string)
         return f"Exported '{topology_name}' BREP to {file_path} ({len(brep_string)} chars)"
-    return brep_string
+    elif format == "obj":
+        Topology.ExportToOBJ(topo, path=file_path, transposeAxes=transpose, tolerance=tolerance)
+        return f"Exported '{topology_name}' to OBJ: {file_path}"
+    elif format == "ifc":
+        Topology.ExportToIFC(topo, path=file_path, buildingName=building_name)
+        return f"Exported '{topology_name}' to IFC: {file_path}"
+    else:
+        return f"Invalid format '{format}'. Use 'brep', 'obj', or 'ifc'."
 
 
 @mcp.tool()
-def import_brep(
+def import_topology(
     ctx: Context,
     name: str,
-    brep_string: str | None = None,
-    file_path: str | None = None,
+    file_path: str,
+    format: str,
+    tolerance: float = 0.0001,
 ) -> str:
-    """Import a topology from a BREP string or file.
-
-    Args:
-        name: Name to assign to the imported topology.
-        brep_string: BREP string content. Mutually exclusive with file_path.
-        file_path: Path to a .brep file. Mutually exclusive with brep_string.
-
-    Returns:
-        Confirmation with imported topology type.
-    """
+    """Import topology from file. format: "brep"|"ifc"."""
     from topologicpy.Topology import Topology
     store: TopologyStore = ctx.request_context.lifespan_context
-    if file_path:
+    if format == "brep":
         with open(file_path, "r") as f:
             brep_string = f.read()
-    if not brep_string:
-        return "Error: provide either brep_string or file_path"
-    topo = Topology.ByBREPString(brep_string)
-    store.put(name, topo, {"source": "brep_import"})
-    return f"Imported '{name}' as {Topology.TypeAsString(topo)}"
-
-
-@mcp.tool()
-def export_obj(
-    ctx: Context,
-    topology_name: str,
-    file_path: str,
-    transpose: bool = False,
-    tolerance: float = 0.0001,
-) -> str:
-    """Export a topology as an OBJ file (triangulated mesh).
-
-    Args:
-        topology_name: Name of the topology to export.
-        file_path: File path for the OBJ output.
-        transpose: If True, swap Y and Z axes. Default False.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation of export.
-    """
-    from topologicpy.Topology import Topology
-    store: TopologyStore = ctx.request_context.lifespan_context
-    topo = store.get(topology_name)
-    Topology.ExportToOBJ(topo, path=file_path, transposeAxes=transpose, tolerance=tolerance)
-    return f"Exported '{topology_name}' to OBJ: {file_path}"
-
-
-@mcp.tool()
-def export_ifc(
-    ctx: Context,
-    topology_name: str,
-    file_path: str,
-    building_name: str = "Default Building",
-) -> str:
-    """Export a topology as an IFC file.
-
-    Args:
-        topology_name: Name of the topology to export.
-        file_path: File path for the IFC output.
-        building_name: Name for the IFC building entity. Default "Default Building".
-
-    Returns:
-        Confirmation of export.
-    """
-    from topologicpy.Topology import Topology
-    store: TopologyStore = ctx.request_context.lifespan_context
-    topo = store.get(topology_name)
-    Topology.ExportToIFC(topo, path=file_path, buildingName=building_name)
-    return f"Exported '{topology_name}' to IFC: {file_path}"
-
-
-@mcp.tool()
-def import_ifc(
-    ctx: Context,
-    name: str,
-    file_path: str,
-    tolerance: float = 0.0001,
-) -> str:
-    """Import a topology from an IFC file.
-
-    Args:
-        name: Name to assign to the imported topology.
-        file_path: Path to the IFC file.
-        tolerance: Geometric tolerance. Default 0.0001.
-
-    Returns:
-        Confirmation with imported topology details.
-    """
-    from topologicpy.Topology import Topology
-    store: TopologyStore = ctx.request_context.lifespan_context
-    topo = Topology.ByIFCFile(file_path, tolerance=tolerance)
-    store.put(name, topo, {"source": "ifc_import", "file": file_path})
-    return f"Imported '{name}' from IFC as {Topology.TypeAsString(topo)}"
+        topo = Topology.ByBREPString(brep_string)
+        store.put(name, topo, {"source": "brep_import", "file": file_path})
+        return f"Imported '{name}' as {Topology.TypeAsString(topo)} from {file_path}"
+    elif format == "ifc":
+        topo = Topology.ByIFCFile(file_path, tolerance=tolerance)
+        store.put(name, topo, {"source": "ifc_import", "file": file_path})
+        return f"Imported '{name}' from IFC as {Topology.TypeAsString(topo)}"
+    else:
+        return f"Invalid format '{format}'. Use 'brep' or 'ifc'."
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# TOOLS — Session Management
+# TOOLS — Session Management (merged: remove+rename+copy)
 # ═══════════════════════════════════════════════════════════════════════════
 
 @mcp.tool()
-def remove_topology(
+def manage_topology(
     ctx: Context,
+    action: str,
     topology_name: str,
+    new_name: str | None = None,
 ) -> str:
-    """Remove a named topology from the session store.
-
-    Args:
-        topology_name: Name of the topology to remove.
-
-    Returns:
-        Confirmation of removal.
-    """
-    store: TopologyStore = ctx.request_context.lifespan_context
-    if store.remove(topology_name):
-        return f"Removed '{topology_name}' from store."
-    return f"'{topology_name}' not found in store."
-
-
-@mcp.tool()
-def rename_topology(
-    ctx: Context,
-    old_name: str,
-    new_name: str,
-) -> str:
-    """Rename a topology in the session store.
-
-    Args:
-        old_name: Current name.
-        new_name: New name.
-
-    Returns:
-        Confirmation of rename.
-    """
-    store: TopologyStore = ctx.request_context.lifespan_context
-    topo = store.get(old_name)
-    meta = store.metadata.get(old_name, {})
-    store.remove(old_name)
-    store.put(new_name, topo, meta)
-    return f"Renamed '{old_name}' → '{new_name}'"
-
-
-@mcp.tool()
-def copy_topology(
-    ctx: Context,
-    source_name: str,
-    new_name: str,
-) -> str:
-    """Create a deep copy of a topology under a new name.
-
-    Args:
-        source_name: Name of the topology to copy.
-        new_name: Name for the copy.
-
-    Returns:
-        Confirmation of copy.
-    """
+    """Manage session. action: "remove"|"rename"|"copy". new_name required for rename/copy."""
     from topologicpy.Topology import Topology
     store: TopologyStore = ctx.request_context.lifespan_context
-    topo = store.get(source_name)
-    copy = Topology.Copy(topo)
-    meta = store.metadata.get(source_name, {}).copy()
-    meta["copied_from"] = source_name
-    store.put(new_name, copy, meta)
-    return f"Copied '{source_name}' → '{new_name}'"
+    if action == "remove":
+        if store.remove(topology_name):
+            return f"Removed '{topology_name}' from store."
+        return f"'{topology_name}' not found in store."
+    elif action == "rename":
+        if not new_name:
+            return "new_name is required for action='rename'."
+        topo = store.get(topology_name)
+        meta = store.metadata.get(topology_name, {})
+        store.remove(topology_name)
+        store.put(new_name, topo, meta)
+        return f"Renamed '{topology_name}' → '{new_name}'"
+    elif action == "copy":
+        if not new_name:
+            return "new_name is required for action='copy'."
+        topo = store.get(topology_name)
+        copy = Topology.Copy(topo)
+        meta = store.metadata.get(topology_name, {}).copy()
+        meta["copied_from"] = topology_name
+        store.put(new_name, copy, meta)
+        return f"Copied '{topology_name}' → '{new_name}'"
+    else:
+        return f"Invalid action '{action}'. Use 'remove', 'rename', or 'copy'."
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -1177,17 +710,18 @@ def session_summary(ctx: Context) -> str:
     store: TopologyStore = ctx.request_context.lifespan_context
     items = store.list_all()
     if not items:
-        return "Session is empty."
-    return json.dumps(items, indent=2)
+        return "Session empty."
+    return json.dumps(items, separators=(',', ':'))
 
 
 @mcp.resource("topologic://topology/{name}/brep")
 def topology_brep_resource(name: str, ctx: Context) -> str:
-    """Get the BREP string for a named topology."""
+    """Get BREP info for a named topology. Returns size only — use export_brep tool to save full BREP to file."""
     from topologicpy.Topology import Topology
     store: TopologyStore = ctx.request_context.lifespan_context
     topo = store.get(name)
-    return Topology.BREPString(topo)
+    brep_string = Topology.BREPString(topo)
+    return f"BREP for '{name}': {len(brep_string)} chars. Use export_brep tool to save to file."
 
 
 # ═══════════════════════════════════════════════════════════════════════════
