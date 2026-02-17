@@ -213,13 +213,6 @@ Claude: [calls create_cell_cylinder for the hole, translate to position,
 Result: Updated floor_1 with cylindrical void
 ```
 
-## Integration with TopologicPy Flow Editor
-
-This MCP server complements the React Flow-based visual programming editor. The server can:
-- **Pre-build models** that are then loaded into the flow editor
-- **Export BREP/IFC** for import into the web viewer
-- **Serve as an AI assistant** within the editor for parametric operations
-
 ## License
 
 GPL-3.0-or-later (matching TopologicPy's license)
